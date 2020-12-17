@@ -1,0 +1,66 @@
+#include "palmlife.h"
+
+DATA "code" ID 1 "code0001.bin"
+
+FORM ID Form1 AT (0 0 160 160)
+USABLE
+MENUID MainMenu
+BEGIN
+	TITLE "Conway's Game of Life"
+	BUTTON "Clear" ID Clear AT (CENTER@20 140 36 AUTO)
+	BUTTON "Random" ID Reset AT (CENTER@60 140 36 AUTO)
+	BUTTON "Step" ID Step AT (CENTER@100 140 36 AUTO)
+	BUTTON "Play" ID Run AT (CENTER@140 140 36 AUTO)
+END
+
+FORM ID FormAbout AT (2 2 156 156)
+USABLE
+MODAL
+BEGIN
+TITLE "About PalmLife"
+LABEL "Conway's Game of Life for Palm OS" AUTOID AT(CENTER 20)
+LABEL "" AUTOID AT (CENTER PREVBOTTOM + 1)
+LABEL "By: Bobberto1995" AUTOID AT (CENTER PREVBOTTOM + 1)
+LABEL "RobbieNesmith.github.io" AUTOID AT (CENTER PREVBOTTOM + 1)
+Button "Back" ID BackButton AT (CENTER 140 AUTO AUTO)
+END
+
+MENU ID MainMenu
+BEGIN
+    PULLDOWN "Pattern"
+    BEGIN
+		MENUITEM "New"			ID MainPatternNewCmd	"N"
+		MENUITEM "Randomize"	ID MainPatternRandomizeCmd	"R"
+		MENUITEM "Open"			ID MainPatternOpenCmd	"O"
+		MENUITEM "Save"			ID MainPatternSaveCmd	"S"
+    END
+    
+    PULLDOWN "Edit"
+    BEGIN
+		MENUITEM "Cut"       	ID MainEditCutCmd		"X"
+		MENUITEM "Copy"       	ID MainEditCopyCmd		"C"
+		MENUITEM "Paste"   		ID MainEditPasteCmd		"V"
+    	MENUITEM SEPARATOR
+		MENUITEM "Select All"	ID MainEditSelectAllCmd	"A"
+    END
+
+    PULLDOWN "Help"
+    BEGIN
+		MENUITEM "Help" 		ID MainHelpHelpCmd	"H"
+		MENUITEM "About" 		ID MainHelpAboutCmd	"B"
+    END
+END
+
+ICONFAMILYEX
+BEGIN
+	BITMAP "lifemono.bmp" BPP 1
+	BITMAP "lifegray4.bmp" BPP 2
+	BITMAP "lifecolor.bmp" BPP 8 TRANSPARENCY 255 0 0
+	BITMAP "lifehires.bmp" BPP 8 DENSITY 2 TRANSPARENCY 255 0 0
+END
+
+SMALLICON "lifesmall.bmp"
+
+VERSION 1 "1.0.0"
+
+LAUNCHERCATEGORY ID 1000 "Games"
