@@ -46,6 +46,9 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	Boolean *lifeGrid;
 	Boolean *lifeTemp;
 	
+	const Char *playMessage = "Play";
+	const Char *pauseMessage = "Pause";
+
 	// Double buffering code from Noiz
 	
 	/**
@@ -92,6 +95,26 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	
 	void playPause() {
 		running = !running;
+		UInt16 runButtonIndex = FrmGetObjectIndex(pfrm, Run);
+		UInt16 clearButtonIndex = FrmGetObjectIndex(pfrm, Clear);
+		UInt16 randomizeButtonIndex = FrmGetObjectIndex(pfrm, Reset);
+		UInt16 stepButtonIndex = FrmGetObjectIndex(pfrm, Step);
+
+		MemPtr runButtonPointer = FrmGetObjectPtr(pfrm, runButtonIndex);
+		MemPtr clearButtonPointer = FrmGetObjectPtr(pfrm, clearButtonIndex);
+		MemPtr randomizeButtonPointer = FrmGetObjectPtr(pfrm, randomizeButtonIndex);
+		MemPtr stepButtonPointer = FrmGetObjectPtr(pfrm, stepButtonIndex);
+		if (running) {
+			CtlSetLabel(runButtonPointer, pauseMessage);
+			CtlSetEnabled(clearButtonPointer, false);
+			CtlSetEnabled(randomizeButtonPointer, false);
+			CtlSetEnabled(stepButtonPointer, false);
+		} else {
+			CtlSetLabel(runButtonPointer, playMessage);
+			CtlSetEnabled(clearButtonPointer, true);
+			CtlSetEnabled(randomizeButtonPointer, true);
+			CtlSetEnabled(stepButtonPointer, true);
+		}
 	}
 	
 	void initGrids() {
