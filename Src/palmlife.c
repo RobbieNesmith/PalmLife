@@ -11,6 +11,24 @@
 #define YOFFSET 15
 #define PIXEL_SIZE 4
 
+static int screenToWorldIndex(int x, int y) {
+	return x / PIXEL_SIZE + (y - YOFFSET) / PIXEL_SIZE * WIDTH;
+}
+
+static void drawPixel(int index, Boolean alive, int xOffset, int yOffset) {
+	Int16 x = index % WIDTH;
+	Int16 y = index / WIDTH;
+    RectangleType pixelRect = {
+		{PIXEL_SIZE * x + xOffset, PIXEL_SIZE * y + yOffset},
+		{PIXEL_SIZE, PIXEL_SIZE}
+	};
+	if (alive) {
+		WinDrawRectangle(&pixelRect, 0);
+	} else {
+		WinEraseRectangle(&pixelRect, 0);
+	}
+}
+
 UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
 	UInt16 err;
@@ -18,6 +36,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	FormType *pfrm;
 	Boolean appActive = true;
 	Boolean running = false;
+	Boolean erase = false;
 	
 	WinHandle screenBufferH;
 	WinHandle oldDrawWinH;
@@ -140,14 +159,8 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 		startDrawOffscreen();
 		WinEraseRectangle(&sourceBounds, 0);
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
-			Int16 x = i % WIDTH;
-			Int16 y = i / WIDTH;
-			pixelRect.topLeft.x = PIXEL_SIZE * x;
-			pixelRect.topLeft.y = PIXEL_SIZE * y;
-			pixelRect.extent.x = PIXEL_SIZE;
-			pixelRect.extent.y = PIXEL_SIZE;
 			if (lifeGrid[i]) {
-				WinDrawRectangle(&pixelRect, 0);
+				drawPixel(i, true, 0, 0);
 			}
 		}
 		endDrawOffscreen();
@@ -249,6 +262,25 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 					deInitGrids();
 					appActive = false;
 					break;
+
+				case penDownEvent:
+				case penMoveEvent:
+					if (!running && FrmGetActiveFormID() == Form1
+							&& e.screenY > YOFFSET
+							&& e.screenY < YOFFSET + HEIGHT * PIXEL_SIZE) {
+						int index = screenToWorldIndex(e.screenX, e.screenY);
+						if (e.eType == penDownEvent) {
+							erase = lifeGrid[index];
+						}
+						if (index > 0 && index < WIDTH * HEIGHT) {
+							lifeGrid[index] = !erase;
+							drawPixel(index, !erase, 0, YOFFSET);
+						}
+					} else if (FrmGetActiveForm()) {
+						FrmHandleEvent(FrmGetActiveForm(), &e);
+					}
+					break;
+
 				default:
 					if (FrmGetActiveForm()) {
 						FrmHandleEvent(FrmGetActiveForm(), &e);
