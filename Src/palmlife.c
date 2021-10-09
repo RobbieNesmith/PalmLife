@@ -1,8 +1,5 @@
 #include "palmlife.h"
 #include <PalmOS.h>
-#include <System/SystemPublic.h>
-#include <UI/UIPublic.h>
-#include <stdarg.h>
 
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 160
